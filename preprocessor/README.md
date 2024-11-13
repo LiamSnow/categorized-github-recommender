@@ -1,10 +1,11 @@
 # Preprocessing
 
 ## Dataset
-Get the dataset from [Kaggle](https://www.kaggle.com/datasets/pelmers/github-repository-metadata-with-5-stars).
+Get the dataset from [Kaggle](https://www.kaggle.com/datasets/pelmers/github-repository-metadata-with-5-stars),
+extract it, and save it here as `dataset.json`.
 
 ## Data Format
-Data is a array of:
+Data is a array of repo metadata, for example:
 ```json
 {
   "owner": "pelmers",
@@ -45,10 +46,13 @@ Data is a array of:
 ### Requirements
 - `stars > 50`
 - `archived = false`
+- `createdAt > 1 month ago`
 
 ### Relevant Data
-`nameWithOwner` (for url)
+__Not for Recommendations__ (for url): `nameWithOwner`
 
-`name, stars, topics, description, primaryLanguage, createdAt, pushedAt`
+__Embedded__: `name, topics.names, description, language.names`
+
+__Not Embedded__: `stars (log scale), createdAt (convert to days since), pushedAt (convert to days since)`
 
 
