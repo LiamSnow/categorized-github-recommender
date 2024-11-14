@@ -1,8 +1,7 @@
 # Preprocessing
 
 ## Dataset
-Get the dataset from [Kaggle](https://www.kaggle.com/datasets/pelmers/github-repository-metadata-with-5-stars),
-extract it, and save it here as `dataset.json`.
+The dataset is from [Kaggle](https://www.kaggle.com/datasets/pelmers/github-repository-metadata-with-5-stars).
 
 ## Data Format
 Data is a array of repo metadata, for example:
@@ -40,7 +39,7 @@ Data is a array of repo metadata, for example:
  1. Ignore repos that dont follow [requirements](#requirements)
  2. Extract [relevant data](#relevant-data)
  3. Embed using OpenAI embeddings
- 4. K-Means clustering
+ 4. DBSCAN clustering
  5. GPT label generation (categorization)
 
 ### Requirements

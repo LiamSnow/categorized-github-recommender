@@ -1,1 +1,3 @@
-/dataset.json
+repo_metadata.json
+*.sqlite
+.env
