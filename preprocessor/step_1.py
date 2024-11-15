@@ -1,33 +1,81 @@
 import json
+import sqlite3
 from typing import List, Dict
+from datetime import datetime
 
 def read_json(file: str) -> List[Dict]:
     with open(file, 'r') as file:
         return json.load(file)
 
 def meets_requirements(repo: Dict) -> bool:
-    # TODO FIXME change to full dataset
-    return repo['stars'] > 10000 and not repo['isArchived']
+    return repo['stars'] > 500 and not repo['isArchived']
 
-def filter_qualifying_repos(repos: List[Dict]) -> List[Dict]:
-    return [repo for repo in repos if meets_requirements(repo)]
+def days_since(date: str) -> int:
+    date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+    return (datetime.now() - date).days
 
-def save_json(path: str, data: List[Dict]) -> None:
-    with open(path, 'w') as file:
-        json.dump(data, file, indent=2)
+def save_repo(cursor, repo):
+    name_with_owner = repo['nameWithOwner']
+    topics = ', '.join([topic["name"] for topic in repo.get("topics", [])])
+    languages = ', '.join([lang["name"] for lang in repo.get("languages", [])])
+
+    try:
+        cursor.execute('''
+        INSERT INTO repositories (name_with_owner, name, description, topics, languages, stars, days_since_created, days_since_pushed)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            name_with_owner,
+            repo['name'],
+            repo['description'],
+            topics,
+            languages,
+            repo['stars'],
+            days_since(repo["createdAt"]),
+            days_since(repo["pushedAt"])
+        ))
+    except sqlite3.IntegrityError:
+        print(f"WARNING: Duplicate entry {name_with_owner}")
+    except Exception as e:
+        print(f"WARNING: Error inserting {name_with_owner}: {str(e)}")
+
+def create_db(name):
+    conn = sqlite3.connect(name)
+    cursor = conn.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS repositories (
+        name_with_owner TEXT PRIMARY KEY,
+        name TEXT,
+        description TEXT,
+        topics TEXT,
+        languages TEXT,
+        stars INTEGER,
+        days_since_created INTEGER,
+        days_since_pushed INTEGER
+    )
+    ''')
+    conn.commit()
+    return conn, cursor
 
 if __name__ == "__main__":
     print("Running Preprocessor Step #1")
     print("(1/4) reading dataset (this will take awhile)...")
     repos = read_json('repo_metadata.json')
 
-    print("(2/4) filtering...")
-    qualifying_repos = filter_qualifying_repos(repos)
+    print("(2/4) making db...")
+    conn, cursor = create_db("step_1_out.sqlite")
 
-    print(f"filter down to {len(qualifying_repos)} repos")
+    print("(3/4) filtering...")
+    count = 0
+    for repo in repos:
+        if meets_requirements(repo):
+            save_repo(cursor, repo)
+            count += 1
 
-    print("(3/4) saving file...")
-    save_json('step_1_out.json', qualifying_repos)
+    print(f" -> filtered down to {count} repos")
+
+    print("(4/4) saving db...")
+    conn.commit()
+    conn.close()
 
     print("Done!")
-    print("(4/4) please wait for deallocation...")
+    print("please wait for deallocation...")
