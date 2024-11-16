@@ -17,7 +17,7 @@ def days_since(date: str) -> int:
 def save_repo(cursor, repo):
     name_with_owner = repo['nameWithOwner']
     topics = ', '.join([topic["name"] for topic in repo.get("topics", [])])
-    languages = ', '.join([lang["name"] for lang in repo.get("languages", [])])
+    languages = ', '.join([lang["name"] for lang in repo.get("languages", [])[:3]])
 
     try:
         cursor.execute('''
@@ -57,7 +57,7 @@ def create_db(name):
     return conn, cursor
 
 if __name__ == "__main__":
-    print("Running Preprocessor Step #1")
+    print("Step #1 - Filter Repos and Save Relevant Data into SQLite DB")
     print("(1/4) reading dataset (this will take awhile)...")
     repos = read_json('repo_metadata.json')
 
