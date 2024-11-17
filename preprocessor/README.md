@@ -1,57 +1,55 @@
 # Preprocessing
 
-## Dataset
-The dataset is from [Kaggle](https://www.kaggle.com/datasets/pelmers/github-repository-metadata-with-5-stars).
+This subrepo will take a giant JSON file from Kaggle with metadata from
+every GitHub repository that has over 5 stars, filter them, embed them
+(using OpenAI embeddings), cluster them (using K-Means), and finally
+label the clusters.
 
-## Data Format
-Data is a array of repo metadata, for example:
-```json
-{
-  "owner": "pelmers",
-  "name": "text-rewriter",
-  "stars": 13,
-  "forks": 5,
-  "watchers": 4,
-  "isFork": false,
-  "isArchived": false,
-  "languages": [ { "name": "JavaScript", "size": 21769 }, { "name": "HTML", "size": 2096 }, { "name": "CSS", "size": 2081 } ],
-  "languageCount": 3,
-  "topics": [ { "name": "chrome-extension", "stars": 43211 } ],
-  "topicCount": 1,
-  "diskUsageKb": 75,
-  "pullRequests": 4,
-  "issues": 12,
-  "description": "Webextension to rewrite phrases in pages",
-  "primaryLanguage": "JavaScript",
-  "createdAt": "2015-03-14T22:35:11Z",
-  "pushedAt": "2022-02-11T14:26:00Z",
-  "defaultBranchCommitCount": 54,
-  "license": null,
-  "assignableUserCount": 1,
-  "codeOfConduct": null,
-  "forkingAllowed": true,
-  "nameWithOwner": "pelmers/text-rewriter",
-  "parent": null
-}
+This basically categorizes every GitHub repository, entirely unsupervised.
+
+Since this is a large task at hand, the process is split into four files:
+ 1. Filters repos and saves their relevant metadata into a SQLite database (for faster access)
+ 2. Creates and executes a multiple batch requests to OpenAI servers to embed each repositories metadata (name, description, langauges, topics)
+ 3. Uses K-Means to cluster each the repositories using their embeddings
+ 4. Uses ChatGPT to create a name for each cluster
+
+## Output
+The final output of the preprocessor is `data/final.sqlite` which contains two tables `repositories` and `clusters`.
+
+`clusters` map a cluster ID -> Name:
+```sql
+CREATE TABLE IF NOT EXISTS clusters (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+)
 ```
 
-## Algorithm
- 1. Ignore repos that dont follow [requirements](#requirements)
- 2. Extract [relevant data](#relevant-data)
- 3. Embed using OpenAI embeddings
- 4. DBSCAN clustering
- 5. GPT label generation (categorization)
+`repositories` contains a repo's "relevant" metadata and cluster ID
+```sql
+CREATE TABLE IF NOT EXISTS repositories (
+    name_with_owner TEXT PRIMARY KEY,
+    name TEXT,
+    description TEXT,
+    topics TEXT,
+    languages TEXT,
+    stars INTEGER,
+    days_since_created INTEGER,
+    days_since_pushed INTEGER,
+    cluster INTEGER # will be -1 if clustering failed
+)
+```
 
-### Requirements
-- `stars > 50`
-- `archived = false`
-- `createdAt > 1 month ago`
 
-### Relevant Data
-__Not for Recommendations__ (for url): `nameWithOwner`
+## Dataset
+The dataset is from [Kaggle](https://www.kaggle.com/datasets/pelmers/github-repository-metadata-with-5-stars)
 
-__Embedded__: `name, topics.names, description, language.names`
-
-__Not Embedded__: `stars (log scale), createdAt (convert to days since), pushedAt (convert to days since)`
-
+## Usage
+1. Download the dataset it, extract it, and save it to `data/repo_metadata.json`.
+2. Run `step_1.py` (you can adjust the `meets_requirements` method to change how many repos get filtered)
+3. Add `OPENAI_API_KEY` to a `.env` file
+4. Run `step_2.py make` then `step_2.py run`
+5. After waiting a few hours, run `step_2.py check` which will download the files once both batch processes are complete
+6. Run `step_3.py` (you can adjust `num_clusters`)
+7. Run `step_4.py` (you can adjust `num_samples` to change how many random samples are apart of the GPT prompt)
+8. All done! You now have your `final.sqlite`
 

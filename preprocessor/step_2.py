@@ -3,14 +3,15 @@ from openai import OpenAI
 from sklearn.decomposition import PCA
 import numpy as np
 import json
-from openai import OpenAI
-from dotenv import load_dotenv
 import sys
 import math
+from openai import OpenAI
+from dotenv import load_dotenv
+
+# Reference: https://platform.openai.com/docs/guides/batch
 
 load_dotenv()
 client = OpenAI()
-
 
 def read_db(name):
     input_conn = sqlite3.connect(name)
@@ -36,7 +37,7 @@ def make_openai_req(repo):
     )
 
 def make_batch_file(num, repos):
-    with open(f"step_2_batch_{num}.jsonl", "w") as batch_file:
+    with open(f"data/step_2_batch_{num}.jsonl", "w") as batch_file:
         for repo in repos:
             req = make_openai_req(repo)
             batch_file.write(req + "\n")
@@ -44,7 +45,7 @@ def make_batch_file(num, repos):
 def make():
     print("MAKING Batch Files")
     print("(1/3) reading step 1 output db...")
-    repos = read_db("step_1_out.sqlite")
+    repos = read_db("data/step_1_out.sqlite")
     print("(2/3) splitting repos...")
     half_length = math.ceil(len(repos) / 2)
     repos_first_half = repos[:half_length]
@@ -56,7 +57,7 @@ def make():
 
 def run_batch_file(num):
     batch_input_file = client.files.create(
-        file=open(f"step_2_batch_{num}.jsonl", "rb"), purpose="batch"
+        file=open(f"data/step_2_batch_{num}.jsonl", "rb"), purpose="batch"
     )
     batch_input_file_id = batch_input_file.id
     return client.batches.create(
@@ -95,8 +96,8 @@ def check():
 
     print("Both batches done => Downloading")
     file_ids = [batch.output_file_id for batch in batches]
-    for i in len(file_ids):
-        filename = f"step_2_out_{i+1}.jsonl"
+    for i in range(len(file_ids)):
+        filename = f"data/step_2_out_{i+1}.jsonl"
         content = client.files.content(file_ids[i])
         with open(filename, 'wb') as f:
             f.write(content.read())

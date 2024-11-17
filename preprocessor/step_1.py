@@ -59,10 +59,10 @@ def create_db(name):
 if __name__ == "__main__":
     print("Step #1 - Filter Repos and Save Relevant Data into SQLite DB")
     print("(1/4) reading dataset (this will take awhile)...")
-    repos = read_json('repo_metadata.json')
+    repos = read_json('data/repo_metadata.json')
 
     print("(2/4) making db...")
-    conn, cursor = create_db("step_1_out.sqlite")
+    conn, cursor = create_db("data/step_1_out.sqlite")
 
     print("(3/4) filtering...")
     count = 0
