@@ -3,12 +3,16 @@ import sqlite3
 from typing import List, Dict
 from datetime import datetime
 
+min_stars = 500
+source_json = "data/repo_metadata.json"
+dest_db = "data/step_1_out.sqlite"
+
 def read_json(file: str) -> List[Dict]:
     with open(file, 'r') as file:
         return json.load(file)
 
 def meets_requirements(repo: Dict) -> bool:
-    return repo['stars'] > 500 and not repo['isArchived']
+    return repo['stars'] > min_stars and not repo['isArchived']
 
 def days_since(date: str) -> int:
     date = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
@@ -58,11 +62,11 @@ def create_db(name):
 
 if __name__ == "__main__":
     print("Step #1 - Filter Repos and Save Relevant Data into SQLite DB")
-    print("(1/4) reading dataset (this will take awhile)...")
-    repos = read_json('data/repo_metadata.json')
+    print(f"(1/4) reading {source_json} this will take awhile...")
+    repos = read_json(source_json)
 
-    print("(2/4) making db...")
-    conn, cursor = create_db("data/step_1_out.sqlite")
+    print(f"(2/4) making {dest_db}...")
+    conn, cursor = create_db(dest_db)
 
     print("(3/4) filtering...")
     count = 0
@@ -73,7 +77,7 @@ if __name__ == "__main__":
 
     print(f" -> filtered down to {count} repos")
 
-    print("(4/4) saving db...")
+    print(f"(4/4) saving {dest_db}...")
     conn.commit()
     conn.close()
 

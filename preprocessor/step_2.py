@@ -9,6 +9,11 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 # Reference: https://platform.openai.com/docs/guides/batch
+# View Batches: https://platform.openai.com/batches
+
+source_db = "data/step_1_out.sqlite"
+batch_req_filename = "data/step_2_batch_N.jsonl"
+batch_res_filename = "data/step_2_out_N.jsonl"
 
 load_dotenv()
 client = OpenAI()
@@ -37,7 +42,7 @@ def make_openai_req(repo):
     )
 
 def make_batch_file(num, repos):
-    with open(f"data/step_2_batch_{num}.jsonl", "w") as batch_file:
+    with open(batch_req_filename.replace('N', str(num)), "w") as batch_file:
         for repo in repos:
             req = make_openai_req(repo)
             batch_file.write(req + "\n")
@@ -45,7 +50,7 @@ def make_batch_file(num, repos):
 def make():
     print("MAKING Batch Files")
     print("(1/3) reading step 1 output db...")
-    repos = read_db("data/step_1_out.sqlite")
+    repos = read_db(source_db)
     print("(2/3) splitting repos...")
     half_length = math.ceil(len(repos) / 2)
     repos_first_half = repos[:half_length]
@@ -56,10 +61,12 @@ def make():
     print("Done!")
 
 def run_batch_file(num):
+    print(f"uploading {num}")
     batch_input_file = client.files.create(
-        file=open(f"data/step_2_batch_{num}.jsonl", "rb"), purpose="batch"
+        file=open(batch_req_filename.replace('N', str(num)), "rb"), purpose="batch"
     )
     batch_input_file_id = batch_input_file.id
+    print(f"running {num}")
     return client.batches.create(
         input_file_id=batch_input_file_id,
         endpoint="/v1/embeddings",
@@ -79,10 +86,10 @@ def check_batch(num, id):
         print(f"{num}: {status}")
         return
 
-def check():
+def download():
     if len(sys.argv) < 4:
         print("Please provide both batch IDs as arguments")
-        print("For example: check batch_XXX batch_XXX")
+        print("For example: download batch_XXX batch_XXX")
         return
     ids = [sys.argv[2].replace(',', ''), sys.argv[3].replace(',', '')]
     batches = [client.batches.retrieve(id) for id in ids]
@@ -90,14 +97,15 @@ def check():
     statuses = [batch.status for batch in batches]
     completed = all(status == "completed" for status in statuses)
     if not completed:
+        print("Batches are not complete!")
         for i in len(statuses):
             print(f"{i+1}: {statuses[i]}")
         return
 
-    print("Both batches done => Downloading")
+    print("Downloading...")
     file_ids = [batch.output_file_id for batch in batches]
     for i in range(len(file_ids)):
-        filename = f"data/step_2_out_{i+1}.jsonl"
+        filename = batch_res_filename.replace('N', str(i+1))
         content = client.files.content(file_ids[i])
         with open(filename, 'wb') as f:
             f.write(content.read())
@@ -105,14 +113,14 @@ def check():
     print("Done!")
 
 def usage():
-    print("Usage: python step_3.py [MODE]")
+    print("Usage: python step_2.py [MODE]")
     print("Modes:")
     print("  make")
     print("    Makes the batch request files")
     print("  run")
     print("    Run the batch requests")
-    print("  check BATCH_1_ID BATCH_2_ID")
-    print("    Check status of batch requests + download when complete")
+    print("  download BATCH_1_ID BATCH_2_ID")
+    print("    Download batch results when complete")
 
 def main():
     print("Step #2 - OpenAI Batch File")
@@ -122,8 +130,8 @@ def main():
             make()
         case "run":
             run()
-        case "check":
-            check()
+        case "download":
+            download()
         case "-h", "--help", "help":
             usage()
         case _:

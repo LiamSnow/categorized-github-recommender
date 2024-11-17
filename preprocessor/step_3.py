@@ -4,8 +4,12 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from umap import UMAP
 import sqlite3
+from mpl_toolkits.mplot3d import Axes3D
 
 # Reference: https://cookbook.openai.com/examples/clustering
+
+num_clusters = 2000
+input_files = ["data/step_2_out_1.jsonl", "data/step_2_out_2.jsonl"]
 
 def read_jsonl(filename):
     names = []
@@ -27,23 +31,31 @@ def kmeans(matrix, n_clusters):
     return labels
 
 def visualize(matrix, clusters):
-    umap = UMAP(n_neighbors=5, min_dist=0.5, n_components=2)
-    vis_dims2 = umap.fit_transform(matrix)
+    umap = UMAP(n_neighbors=3, min_dist=0.8, n_components=3, spread=1.5)
+    vis_dims3 = umap.fit_transform(matrix)
 
-    x = [x for x, y in vis_dims2]
-    y = [y for x, y in vis_dims2]
+    x = [x for x, y, z in vis_dims3]
+    y = [y for x, y, z in vis_dims3]
+    z = [z for x, y, z in vis_dims3]
+
     unique_clusters = np.unique(clusters)
     colors = plt.cm.rainbow(np.linspace(0, 1, len(unique_clusters)))
+
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
 
     for i, cluster in enumerate(unique_clusters):
         mask = clusters == cluster
         xs = np.array(x)[mask]
         ys = np.array(y)[mask]
+        zs = np.array(z)[mask]
         color = colors[i]
-        plt.scatter(xs, ys, color=color, alpha=0.3, label=f"Cluster {cluster}", s=1)
+        ax.scatter(xs, ys, zs, color=color, alpha=0.3, s=1)
 
-    plt.title("Cluster Visualiziation")
-    # plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title("Cluster Visualization")
     plt.savefig("data/cluster_visualization.png", dpi=300, bbox_inches="tight")
     plt.close()
 
@@ -68,12 +80,11 @@ def copy_insert_db(source_db, dest_db, name_with_owners, clusters):
     conn.close()
 
 def main():
-    num_clusters = 100
     print("Step #3 - Clustering")
 
     print("parsing files...")
-    names1, matrix1 = read_jsonl("data/step_2_out_1.jsonl")
-    names2, matrix2 = read_jsonl("data/step_2_out_2.jsonl")
+    names1, matrix1 = read_jsonl(input_files[0])
+    names2, matrix2 = read_jsonl(input_files[1])
     names = np.concatenate((names1, names2))
     matrix = np.vstack((matrix1, matrix2))
 
