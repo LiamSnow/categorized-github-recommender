@@ -8,10 +8,10 @@ label the clusters.
 This basically categorizes every GitHub repository, entirely unsupervised.
 
 Since this is a large task at hand, the process is split into four files:
- 1. Filters repos and saves their relevant metadata into a SQLite database (for faster access)
- 2. Creates and executes a multiple batch requests to OpenAI servers to embed each repositories metadata (name, description, langauges, topics)
- 3. Uses K-Means to cluster each the repositories using their embeddings
- 4. Uses ChatGPT to create a name for each cluster
+`step_1.py`: Filters repos and saves their relevant metadata into a SQLite database (for faster access)
+`step_2.py`: Creates and executes a multiple batch requests to OpenAI servers to embed each repositories metadata (name, description, langauges, topics)
+`step_3.py`: Uses K-Means to cluster each the repositories using their embeddings
+`step_4.py`: Uses ChatGPT to create a name for each cluster
 
 ## Output
 The final output of the preprocessor is `data/final.sqlite` which contains two tables `repositories` and `clusters`.
