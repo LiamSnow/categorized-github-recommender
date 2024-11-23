@@ -7,9 +7,9 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Replace these with your GitHub client ID and secret
-client_id = "Ov23likcFpPBm7xHAWE2"  # your id
-client_secret = "5583d98351ffde51d5bd80c0e2305d8634f08c6f"  # your secret
-redirect_uri = "http://127.0.0.1:5000/callback"
+client_id = ""  # your id
+client_secret = ""  # your secret
+redirect_uri = ""
 
 auth_url = "https://github.com/login/oauth/authorize"
 token_url = "https://github.com/login/oauth/access_token"
@@ -74,7 +74,8 @@ def repos():
         repos_data.append({
             "name": repo.name,
             "description": repo.description or "No description provided",
-            "stars": repo.stargazers_count
+            "stars": repo.stargazers_count,
+            "languages": repo.language
         })
 
     return render_template("repos.html", repos=repos_data)
