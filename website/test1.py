@@ -8,7 +8,11 @@ app.secret_key = os.urandom(24)
 # Replace theswe with your GitHub client ID and secret
 client_id = " "  # your id
 client_secret = " "  # your secret
+<<<<<<< HEAD
 redirect_uri = ""
+=======
+redirect_uri = "http://127.0.0.1:5000/callback"
+>>>>>>> 0f3c269ea428a84f25e5152c6c4b1ee73c6fb66e
 
 auth_url = "https://github.com/login/oauth/authorize"
 tok_url = "https://github.com/login/oauth/access_token"
