@@ -3,10 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub OAuth App</title>
+    <title>GitHub Repo Recommender</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
-    <h1>Welcome to the GitHub OAuth App</h1>
-    <p><a href="/login">Log in with GitHub1</a></p>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>GitHub Repository Recommender</h1>
+        <p></p>
+        <p>Get personalized GitHub repository recommendations.</p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="topnav">
+        <a href="/home">Home</a>
+        <a href="#about-project">About</a>
+        <a href="/login" class="right">Log in with GitHub</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+
+            <div class="card">
+                <h2>Welcome to our GitHub Repository Recommender</h2>
+                <p>
+                    This application allows you to log in using your GitHub account and explore personalized repository recommendations. Get started by logging into your GitHub account below.
+                </p>
+                <p><a href="/login" class="login-button">Log in with GitHub</a></p>
+            </div>
+
+            <div class="card" id="about-project">
+                <h3>About Our Project</h3>
+                <p>Team Members: Jessilyn Collette, Liam Snow, Sarthak Swain, Yared Taye, Arsalan Saif</p>
+                <p>This project is a recommendation system that helps Github users discover new repositories by clustering their starred repositories into categories and 
+                    providing personalized suggestions based on those categories. By using Github API and combining categorization techniques (k means) with recommendation algorithms such 
+                    as Deterministic ranking algorithms, the project provides meaningful and targeted repository recommendations. This web-based application allows users to 
+                    interactively explore relevant repositories based on their interests. </p>
+            </div>
+            <div class="card">
+                <h3>Project Links</h3>
+                <p><a href="https://github.com/LiamSnow/cs547-project">
+                    <img src="../images/whitelogo.png" alt="GitHub Logo" class="github-logo">
+                </a></p>
+            </div>
+        </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <h2>CS547 Final Project</h2>
+        <p>&copy; 2024 GitHub Repository Recommender.</p>
+    </div>
+
 </body>
 </html>
