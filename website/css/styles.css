@@ -1,17 +1,22 @@
+/* General Reset and Box Sizing */
 * {
     box-sizing: border-box;
-}
-
-body {
-    font-family: Palatino, sans-serif;
     margin: 0;
     padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column; 
+    font-family: Helvetica, sans-serif;
     background-color: #5d6d7e;
-    background-image: url('../images/githubLogo.svg'); 
-    background-size: 90% 1000px; 
-    background-position: center center; 
-    background-repeat: no-repeat; 
-    background-attachment: fixed; 
+    background-image: url('../images/githubLogo.svg');
+    background-size: 90% 1000px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* Header */
@@ -33,6 +38,7 @@ body {
     font-style: italic;
     margin-top: 10px;
 }
+
 /* Navigation Bar */
 .topnav {
     overflow: hidden;
@@ -59,25 +65,23 @@ body {
 
 /* Main Content Layout */
 .row {
+    flex: 1; 
     display: flex;
     flex-direction: column;
-    gap: 10px;   
-    padding: 15px;
+    gap: 20px;
+    padding: 20px;
 }
 
 /* Card Styles */
 .card {
     background-color: #273746;
     padding: 40px;
-    margin-bottom: 10px;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     color: #d5d8dc;
-    width: 100%;  
 }
 
-
-/* Login Button Styling */
+/* Button Styling */
 .login-button {
     display: inline-block;
     background-color: #2874a6;
@@ -89,7 +93,6 @@ body {
     transition: background-color 0.3s;
 }
 
-/* Change background on hover */
 .login-button:hover {
     background-color: #1b4f72;
 }
@@ -106,15 +109,16 @@ body {
 }
 
 
+
 /* Footer */
 .footer {
-    padding: 10px;
-    text-align: center;
     background-image: linear-gradient(to right, #5d6d7e, #34495e);
-    margin-top: 10px;
     color: #d5d8dc;
+    text-align: center;
+    padding: 10px;
+    margin-top: auto;
+    margin-bottom: 0px;
 }
-
 
 /* Responsive Design */
 @media screen and (max-width: 800px) {
