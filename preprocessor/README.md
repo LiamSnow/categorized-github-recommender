@@ -20,19 +20,17 @@ Since this is a large task at hand, the process is split into four files:
 `step_4.py`: Uses ChatGPT to create a name for each cluster
 
 ## Output
-The final output of the preprocessor is `data/final.sqlite` which contains two tables `repositories` and `clusters`.
+The final output of the preprocessor is:
+ - `data/final.sqlite`: A SQLite database containing two tables `repositories` and `clusters` shown below
+ - `data/chroma/`: A ChromaDB that maps `name_with_owner` -> embeddings for similarity search
 
-`clusters` map a cluster ID -> Name:
 ```sql
-CREATE TABLE IF NOT EXISTS clusters (
+TABLE clusters (
     id INTEGER PRIMARY KEY,
     name TEXT
 )
-```
 
-`repositories` contains a repo's "relevant" metadata and cluster ID
-```sql
-CREATE TABLE IF NOT EXISTS repositories (
+TABLE repositories (
     name_with_owner TEXT PRIMARY KEY,
     name TEXT,
     description TEXT,
@@ -41,7 +39,7 @@ CREATE TABLE IF NOT EXISTS repositories (
     stars INTEGER,
     days_since_created INTEGER,
     days_since_pushed INTEGER,
-    cluster INTEGER # will be -1 if clustering failed
+    FOREIGN KEY (cluster) REFERENCES clusters(id)
 )
 ```
 
