@@ -17,5 +17,9 @@
 # RECOMMEND
 # takes: user's created and starred repos
 # call CATEGORIZE, take top 5 categories
-# return highest starred repos in each category, which the user has not starred
-
+# recommend using:
+#  - not starred by user
+#  - high star count
+#  - recently pushed
+#  - recently created
+#
