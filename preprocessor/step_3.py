@@ -10,7 +10,7 @@ num_clusters = 2000
 input_files = ["data/step_2_out_1.jsonl", "data/step_2_out_2.jsonl"]
 source_db = "data/step_1_out.sqlite"
 dest_db = "data/step_3_out.sqlite"
-embeddings_db = "data/embeddings/"
+embeddings_db = "output/embeddings/"
 
 def read_jsonl(filename):
     names = []

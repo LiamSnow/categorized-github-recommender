@@ -21,8 +21,8 @@ Since this is a large task at hand, the process is split into four files:
 
 ## Output
 The final output of the preprocessor is:
- - `data/final.sqlite`: A SQLite database containing two tables `repositories` and `clusters` shown below
- - `data/chroma/`: A ChromaDB that maps `name_with_owner` -> embeddings for similarity search
+ - `output/meta.sqlite`: A SQLite database containing two tables `repositories` and `clusters` shown below
+ - `output/embeddings/`: A ChromaDB that maps `name_with_owner` -> embeddings for similarity search
 
 ```sql
 TABLE clusters (
