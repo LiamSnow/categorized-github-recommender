@@ -1,12 +1,10 @@
-from flask import Flask, request, g, session, redirect, url_for, flash
-from flask import render_template_string, jsonify
+from flask import Flask, request, session, redirect, url_for, flash
 from flask_github import GitHub
 from dotenv import load_dotenv
 import os
 import recommend
 import cluster
 import constants
-from collections import Counter
 
 load_dotenv()
 app = Flask(__name__)
@@ -25,24 +23,20 @@ def index():
         avatar_url = session.get("avatar_url", "")
 
         user_repos = github.get('/user/repos') + github.get('/user/starred')
-        cluster_map = cluster.get_clusters(user_repos)
-        top_clusters_map = Counter(cluster_map).most_common(5)
-        top_clusters = [id for id, _ in top_clusters_map]
-        # chtml = "<h3>Your Categories</h3>"
-        # for id in top_clusters:
-        #     chtml += f'<p>{cluster.cluster_names[id]}</p>'
+        top_clusters = cluster.get_top_clusters(user_repos)
 
         rhtml = "<h2>Recommendations</h2>"
         recs = recommend.gen_recommendations(user_repos, top_clusters)
         for cluster_id, repos in recs.items():
-            rhtml += '<div style="border: 1px solid black; margin: 10px;">'
-            rhtml += f"<h4>{cluster.cluster_names[cluster_id]}</h4>"
+            rhtml += '<div style="border: 1px solid black; margin: 10px; padding: 10px;">'
+            rhtml += f'<h4 style="text-decoration: underline;">{cluster.cluster_names[cluster_id]}</h4>'
             for repo in repos:
                 name, desc, stars, _, _ = repo
-                rhtml += f"<p>{name} [{stars}]: {desc}</p>"
+                link = f'<a href="https://github.com/{name}">{name}</a>'
+                rhtml += f"<p>{link} [{stars}]: {desc}</p>"
             rhtml += "</div>"
 
-        return f'<span>{username}</span>' + '<a href="/logout">Logout</a>' + f'<img src="{avatar_url}" style="width:50px" />' + rhtml
+        return f'<img src="{avatar_url}" style="width:50px" />' + f'<span>{username}</span>' + '<a href="/logout">Logout</a>' + rhtml
 
 @app.route('/login')
 def login():
@@ -77,9 +71,3 @@ def authorized(access_token):
     session['username'] = github_user['login']
     session['avatar_url'] = github_user['avatar_url']
     return redirect(next_url)
-
-# @app.route('/user')
-# def user():
-#     return jsonify(github.get('/user'))
-
-
