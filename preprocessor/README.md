@@ -1,4 +1,4 @@
-# Preprocessing
+# Preprocessor
 
 This subrepo will take a giant JSON file from Kaggle with metadata from
 every GitHub repository that has over 5 stars, filter them, embed them

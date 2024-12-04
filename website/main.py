@@ -1,4 +1,4 @@
-from flask import Flask, request, session, redirect, url_for, flash
+from flask import Flask, request, session, redirect, url_for, flash, render_template
 from flask_github import GitHub
 from dotenv import load_dotenv
 import os
@@ -17,26 +17,22 @@ github = GitHub(app)
 @app.route("/")
 def index():
     if session.get('access_token', None) is None:
-        return '<a href="/login">Login</a>'
+        return render_template('login.html')
     else:
         username = session.get("username", "")
         avatar_url = session.get("avatar_url", "")
 
         user_repos = github.get('/user/repos') + github.get('/user/starred')
         top_clusters = cluster.get_top_clusters(user_repos)
-
-        rhtml = "<h2>Recommendations</h2>"
         recs = recommend.gen_recommendations(user_repos, top_clusters)
-        for cluster_id, repos in recs.items():
-            rhtml += '<div style="border: 1px solid black; margin: 10px; padding: 10px;">'
-            rhtml += f'<h4 style="text-decoration: underline;">{cluster.cluster_names[cluster_id]}</h4>'
-            for repo in repos:
-                name, desc, stars, _, _ = repo
-                link = f'<a href="https://github.com/{name}">{name}</a>'
-                rhtml += f"<p>{link} [{stars}]: {desc}</p>"
-            rhtml += "</div>"
 
-        return f'<img src="{avatar_url}" style="width:50px" />' + f'<span>{username}</span>' + '<a href="/logout">Logout</a>' + rhtml
+        return render_template(
+            'recommendations.html',
+            username=username,
+            avatar_url=avatar_url,
+            recs=recs,
+            cluster_names=cluster.cluster_names
+        )
 
 @app.route('/login')
 def login():

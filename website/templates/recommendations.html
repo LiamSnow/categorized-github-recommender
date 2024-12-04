@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header>
+    <img src="{{ avatar_url }}" style="width:50px" />
+    <span>{{ username }}</span>
+    <a href="/logout">Logout</a>
+</header>
+
+<h1>Recommendations</h1>
+
+{% for cluster_id, repos in recs.items() %}
+    <div class="recommendation">
+        <h4>{{ cluster_names[cluster_id] }}</h4>
+        {% for repo in repos %}
+            <p>
+                <a href="https://github.com/{{ repo[0] }}">{{ repo[0] }}</a>
+                [{{ repo[2] }}]: {{ repo[1] }}
+            </p>
+        {% endfor %}
+    </div>
+{% endfor %}
+
+{% endblock %}
