@@ -1,7 +1,103 @@
+* {
+  box-sizing: border-box;
+}
 
+html,
+body {
+  font-family: "Mona Sans", sans-serif;
+  background: #010409;
+  color: rgb(240, 246, 252);
+  padding: 0;
+  margin: 0;
+}
+
+header {
+  border-bottom: max(1px, 0.0625rem) solid #3d444d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+}
+
+button {
+    background: rgb(33, 40, 48);
+    color: rgb(240, 246, 252);
+    border: 1px solid rgb(61, 68, 77);
+    padding: 3px 7px 5px 7px;
+    border-radius: 5px;
+    transition: background 100ms ease-out;
+    cursor: pointer;
+}
+
+button:hover {
+    background: rgba(33, 40, 48, 0.8);
+}
+
+header img {
+  display: block;
+  border-radius: 50%;
+  width: 35px;
+  border: 1px solid #3d444d;
+}
+
+main {
+  padding: 20px;
+}
+
+main > h1 {
+  margin: 5px 0 20px 0;
+  text-align: center;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.category {
+  border: 1px solid #3d444d;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 5px;
+  background: rgb(13, 17, 23);
+  width: 350px;
+}
+
+.category h4 {
+  margin: 0;
+  padding: 0;
+}
 
 .recommendation {
-    border: 1px solid black;
-    margin: 10px;
-    padding: 10px;
+  display: block;
+  text-decoration: none;
+  color: rgb(240, 246, 252);
+  margin-top: 5px;
+}
+
+.recommendation .stars {
+  color: #fdd835;
+}
+
+.recommendation .description {
+  font-style: italic;
+  color: grey;
+}
+
+.launch {
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.launch h1 {
+    margin: 20px 0 10px 0;
+}
+
+.launch p {
+    margin: 0 0 20px 0;
 }

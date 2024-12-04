@@ -2,23 +2,32 @@
 
 {% block content %}
 <header>
-    <img src="{{ avatar_url }}" style="width:50px" />
+    <a href="/logout">
+        <button>Logout</button>
+    </a>
     <span>{{ username }}</span>
-    <a href="/logout">Logout</a>
+    <a href="https://github.com/{{ username }}">
+        <img src="{{ avatar_url }}" />
+    </a>
 </header>
 
-<h1>Recommendations</h1>
-
-{% for cluster_id, repos in recs.items() %}
-    <div class="recommendation">
-        <h4>{{ cluster_names[cluster_id] }}</h4>
-        {% for repo in repos %}
-            <p>
-                <a href="https://github.com/{{ repo[0] }}">{{ repo[0] }}</a>
-                [{{ repo[2] }}]: {{ repo[1] }}
-            </p>
+<main>
+    <h1>Recommendations</h1>
+    <div class="categories">
+        {% for cluster_id, repos in recs.items() %}
+            <div class="category">
+                <h4>{{ cluster_names[cluster_id] }}</h4>
+                {% for repo in repos %}
+                    <a href="https://github.com/{{ repo[0] }}" class="recommendation">
+                        <span class="name">{{ repo[0] }} </span>
+                        <span class="stars">⭐{{ repo[2] }}</span>
+                        <br>
+                        <span class="description"> {{ repo[1] }}</span>
+                    </a>
+                {% endfor %}
+            </div>
         {% endfor %}
     </div>
-{% endfor %}
+</main>
 
 {% endblock %}
