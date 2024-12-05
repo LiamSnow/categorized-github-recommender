@@ -62,11 +62,6 @@ main > h1 {
   border-radius: 5px;
   background: rgb(13, 17, 23);
   width: 350px;
-  transition: background 100ms ease-out;
-}
-
-.category:hover {
-  background: rgba(33, 40, 48, 0.8);
 }
 
 .category h4 {
