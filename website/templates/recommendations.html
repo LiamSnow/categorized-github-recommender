@@ -16,7 +16,7 @@
     <div class="categories">
         {% for cluster_id, repos in recs.items() %}
             <div class="category">
-                <h4>{{ cluster_meta[cluster_id][0] }}</h4>
+                <a href="/category{{cluster_id}}" class="category-name">{{ cluster_meta[cluster_id][0] }}</a>
                 {% for repo in repos %}
                     <a href="https://github.com/{{ repo[0] }}" class="recommendation">
                         <span class="name">{{ repo[0] }} </span>
