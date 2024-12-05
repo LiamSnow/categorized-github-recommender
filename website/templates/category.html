@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <h1>{{ cluster_name }}</h1>
+    <div class="category-repos">
+        {% for (name, desc, stars) in repos %}
+        <a href="https://github.com/{{ name }}" class="recommendation">
+            <span class="name">{{ name }} </span>
+            <span class="stars">⭐{{ stars }}</span>
+            <br>
+            <span class="description"> {{ desc }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

@@ -4,18 +4,21 @@ from collections import Counter
 import chromadb
 from collections import defaultdict
 import constants
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = OpenAI()
 
 # this is not too big we can bring it all into memory
-def get_all_cluster_names():
+def get_all_cluster_meta():
     conn = sqlite3.connect(constants.meta_db)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, name FROM clusters")
-    clusters = dict(cursor.fetchall())
+    cursor.execute("SELECT id, name, stars FROM clusters ORDER BY stars DESC")
+    clusters = cursor.fetchall()
     conn.close()
-    return clusters
-cluster_names = get_all_cluster_names()
+    return {row[0]: (row[1], row[2]) for row in clusters}
+cluster_meta = get_all_cluster_meta()
 
 # cache stores kNN result so we don't have to embed all the time
 def make_cache_table():
@@ -71,7 +74,8 @@ def get_repo_cluster(name_with_owner, cursor):
     if result:
         return result[0]
 
-# this is essentially kNN
+# Uses kNN to classify unknown repo into existing dataset
+# by using cosine similarity between OpenAI embeddings
 def gen_repo_cluster(repo, chroma_collection, meta_cursor, cache_conn, cache_cursor):
     # embed this repo
     try:
@@ -120,4 +124,15 @@ def gen_repo_cluster(repo, chroma_collection, meta_cursor, cache_conn, cache_cur
 
     return cluster
 
-
+def get_repos_for_cluster(cluster_id):
+    conn = sqlite3.connect(constants.meta_db)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT name_with_owner, description, stars
+        FROM repositories
+        WHERE cluster = ?
+        ORDER BY stars DESC
+    """, (cluster_id,))
+    repos = cursor.fetchall()
+    conn.close()
+    return repos

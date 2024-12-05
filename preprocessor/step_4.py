@@ -12,7 +12,7 @@ min_words = 4
 max_words = 10
 num_samples = 20 # how many samples from each cluster is included in prompt
 source_db = "data/step_3_out.sqlite"
-dest_db = "output/final.sqlite"
+dest_db = "output/meta.sqlite"
 batch_req_file = "data/step_4_batch.jsonl"
 batch_res_file = "data/step_4_out.jsonl"
 

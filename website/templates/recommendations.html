@@ -16,13 +16,13 @@
     <div class="categories">
         {% for cluster_id, repos in recs.items() %}
             <div class="category">
-                <h4>{{ cluster_names[cluster_id] }}</h4>
-                {% for repo in repos %}
-                    <a href="https://github.com/{{ repo[0] }}" class="recommendation">
-                        <span class="name">{{ repo[0] }} </span>
-                        <span class="stars">⭐{{ repo[2] }}</span>
+                <h4>{{ cluster_meta[cluster_id][0] }}</h4>
+                {% for (name, desc, stars) in repos %}
+                    <a href="https://github.com/{{ name }}" class="recommendation">
+                        <span class="name">{{ name }} </span>
+                        <span class="stars">⭐{{ stars }}</span>
                         <br>
-                        <span class="description"> {{ repo[1] }}</span>
+                        <span class="description"> {{ desc }}</span>
                     </a>
                 {% endfor %}
             </div>

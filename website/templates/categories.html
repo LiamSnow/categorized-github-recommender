@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <h1>Categories</h1>
+    <div class="all-categories">
+        {% for cluster_id, (cluster_name, cluster_stars) in cluster_meta.items() %}
+        <a href="/category/{{ cluster_id }}">
+            {{ cluster_name }}
+        </a>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

@@ -1,10 +1,10 @@
 from flask import Flask, request, session, redirect, url_for, flash, render_template
 from flask_github import GitHub
-from dotenv import load_dotenv
 import os
 import recommend
 import cluster
 import constants
+from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
@@ -16,8 +16,24 @@ github = GitHub(app)
 
 @app.route("/")
 def index():
+    return render_template('home.html')
+
+@app.route("/categories")
+def categories():
+    return render_template('categories.html', cluster_meta=cluster.cluster_meta)
+
+@app.route("/category/<int:id>")
+def category(id):
+    cluster_name = cluster.cluster_meta.get(id, [None])[0]
+    if cluster_name is None:
+        return "Category not found", 404
+    repos = cluster.get_repos_for_cluster(id)
+    return render_template('category.html', cluster_name=cluster_name, repos=repos)
+
+@app.route("/recommendations")
+def recommendations():
     if session.get('access_token', None) is None:
-        return render_template('login.html')
+        return redirect(url_for('login'))
     else:
         username = session.get("username", "")
         avatar_url = session.get("avatar_url", "")
@@ -31,7 +47,7 @@ def index():
             username=username,
             avatar_url=avatar_url,
             recs=recs,
-            cluster_names=cluster.cluster_names
+            cluster_meta=cluster.cluster_meta
         )
 
 @app.route('/login')
@@ -56,7 +72,7 @@ def token_getter():
 @app.route('/github-callback')
 @github.authorized_handler
 def authorized(access_token):
-    next_url = request.args.get('next') or url_for('index')
+    next_url = request.args.get('next') or url_for('recommendations')
     if access_token is None:
         flash("Authorization failed.")
         return redirect(next_url)

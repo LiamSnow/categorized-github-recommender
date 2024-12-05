@@ -1,11 +1,14 @@
-from datetime import date
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 embeddings_db = '../preprocessor/output/embeddings/'
 
 meta_db = '../preprocessor/output/meta.sqlite'
 
 cache_db = 'cache.sqlite'
-domain = "http://localhost:5000"
+domain = os.getenv('FLASK_DOMAIN')
 
 # how many recommendations per category
 num_recommendations = 4

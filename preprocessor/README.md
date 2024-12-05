@@ -39,6 +39,7 @@ TABLE repositories (
     stars INTEGER,
     days_since_created INTEGER,
     days_since_pushed INTEGER,
+    cluster INTEGER,
     FOREIGN KEY (cluster) REFERENCES clusters(id)
 )
 ```
