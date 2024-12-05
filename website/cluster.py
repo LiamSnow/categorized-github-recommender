@@ -5,6 +5,7 @@ import chromadb
 from collections import defaultdict
 import constants
 from dotenv import load_dotenv
+import recommend
 
 load_dotenv()
 
@@ -127,12 +128,8 @@ def gen_repo_cluster(repo, chroma_collection, meta_cursor, cache_conn, cache_cur
 def get_repos_for_cluster(cluster_id):
     conn = sqlite3.connect(constants.meta_db)
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT name_with_owner, description, stars
-        FROM repositories
-        WHERE cluster = ?
-        ORDER BY stars DESC
-    """, (cluster_id,))
-    repos = cursor.fetchall()
+    repos = recommend.gen_recommendations_for_cluster(None, cluster_id, cursor, False)
     conn.close()
     return repos
+
+

@@ -15,25 +15,29 @@ def gen_recommendations(user_repos, clusters):
         recommendations[cluster] = gen_recommendations_for_cluster(user_repo_names, cluster, meta_cursor)
     return recommendations
 
-def gen_recommendations_for_cluster(user_repo_names, cluster, meta_cursor):
+def gen_recommendations_for_cluster(user_repo_names, cluster, meta_cursor, limit=True):
     # get all repos for cluster
     meta_cursor.execute("""
         SELECT name_with_owner, description, stars, days_since_created, days_since_pushed
         FROM repositories
         WHERE cluster = ?
     """, (cluster,))
-    repo_data = meta_cursor.fetchall()
+    repos = meta_cursor.fetchall()
 
     # exclude repos that the user has created/starred
-    user_repo_set = set(user_repo_names)
-    repos = [repo for repo in repo_data if repo[0] not in user_repo_set]
+    if user_repo_names is not None:
+        user_repo_set = set(user_repo_names)
+        repos = [repo for repo in repos if repo[0] not in user_repo_set]
 
     # rank repos (and remove those with score=0)
     scored_repos = [(repo, score) for repo in repos if (score := score_repo(repo)) > 0]
     scored_repos.sort(key=lambda x: x[1], reverse=True)
 
     # return top N repos
-    return [pair[0] for pair in scored_repos[:constants.num_recommendations]]
+    if limit:
+        return [pair[0] for pair in scored_repos[:constants.num_recommendations]]
+    else:
+        return [pair[0] for pair in scored_repos]
 
 # GOAL: recommend up and coming / interesting repositories
 def score_repo(repo):
