@@ -64,9 +64,12 @@ main > h1 {
   width: 350px;
 }
 
-.category h4 {
+.category .category-name {
   margin: 0;
   padding: 0;
+  font-size: 16px;
+  text-decoration: none;
+  color: rgb(240, 246, 252);
 }
 
 .recommendation {
