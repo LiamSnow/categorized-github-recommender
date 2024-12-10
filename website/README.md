@@ -1,5 +1,8 @@
 # Website
 
+This folder contains the recommendation, categorization of unknown
+repositories (kNN), and the website.
+
 ## Running
  1. Install python packages from `requirements.txt`
  2. Get an OpenAI api key
