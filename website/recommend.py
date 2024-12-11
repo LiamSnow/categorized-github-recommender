@@ -56,9 +56,9 @@ def score_repo(repo):
     if days_since_created < 180:
         age_score = 1.0
     elif days_since_created < 730:
-        return 0.9
+        age_score = 0.9
     elif days_since_created >= 1460:
-        return 0.7
+        age_score = 0.7
 
     star_score = math.log10(stars + 1)
 

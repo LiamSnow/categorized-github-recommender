@@ -19,6 +19,9 @@ Since this is a large task at hand, the process is split into four files:
 
 `step_4.py`: Uses ChatGPT to create a name for each cluster
 
+`step_5.py`: Count the total number of stars for each cluster (note that this is only done on the filtered dataset
+so only use it for relative popularity)
+
 ## Output
 The final output of the preprocessor is:
  - `output/meta.sqlite`: A SQLite database containing two tables `repositories` and `clusters` shown below
