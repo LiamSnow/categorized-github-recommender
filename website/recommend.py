@@ -52,13 +52,13 @@ def score_repo(repo):
         return 0
 
     # younger projects are better, but only slightly
-    age_score = 0
+    age_score = 0.7
     if days_since_created < 180:
         age_score = 1.0
     elif days_since_created < 730:
         age_score = 0.9
-    elif days_since_created >= 1460:
-        age_score = 0.7
+    elif days_since_created < 1460:
+        age_score = 0.8
 
     star_score = math.log10(stars + 1)
 
