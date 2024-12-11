@@ -1,7 +1,5 @@
 # Categorized GitHub Recommender
 
-Note: This is the final project for CS547: Information Retrieval.
-
 The goal of this project is such that the user can sign into a website
 using their GitHub account and be given recommendations for new
 repositories they could explore based off their starred and created

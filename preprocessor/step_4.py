@@ -85,7 +85,7 @@ def run():
         input_file_id=batch_input_file_id,
         endpoint="/v1/chat/completions",
         completion_window="24h",
-        metadata={"description": f"CS 547 Final Project Categorizing Batch"},
+        metadata={"description": f"Categorized Github Recommender Cluster Naming Batch"},
     )
     print(f"batch_id = {batch_id}")
 

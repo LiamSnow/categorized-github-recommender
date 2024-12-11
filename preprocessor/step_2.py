@@ -71,7 +71,7 @@ def run_batch_file(num):
         input_file_id=batch_input_file_id,
         endpoint="/v1/embeddings",
         completion_window="24h",
-        metadata={"description": f"CS 547 Final Project Embeddings Batch {num}"},
+        metadata={"description": f"Categorized Github Recommender Embeddings Batch {num}"},
     )
 
 def run():
